@@ -19,6 +19,9 @@ ui <- fluidPage(
     sidebarPanel(
       # Put a widget here for the user to interact with!
       # You could filter by year, by county, etc.
+      # Copy the line below to make a select box 
+      selectInput("select", label = h3("Select box"), 
+                  choices = select(data, CountyName))
     ),
     
     mainPanel(
@@ -32,10 +35,13 @@ ui <- fluidPage(
 
 # Server
 server <- function(input, output) {
+  # You can access the value of the widget with input$select, e.g.
+  output$value <- renderPrint({ input$checkGroup })
   # A plot of air quality
   # This can be over time, by county, etc.
   output$airQualityPlot <- renderPlot({
-    
+    data %>% filter(CountyName == input$select) %>%
+      ggplot() + geom_line() + aes(ReportYear, Value)
   })
   
   # A table of the filtered data
